@@ -400,8 +400,15 @@ app.put(`/update-question/:id`, async (req, res) => {
   }
 });
 
-app.delete(`/delete-question/:id`, async (req, res) => {
+app.delete(`/delete-question/:id`, authenticateToken, async (req, res) => {
   const { id } = req.params;
+  // Check if the user is a Teacher
+  if (req.user.role !== "Teacher") {
+    console.log("Unauthorized role:", req.user.role); // Log unauthorized role
+    return res
+      .status(403)
+      .json({ error: "You are not authorized to view the questions." });
+  }
 
   try {
     const { data, error } = await supabase

@@ -400,7 +400,6 @@ app.put(`/update-question/:id`, async (req, res) => {
   }
 });
 
-// Backend code - confirm that a proper response is sent after successful deletion
 app.delete(`/delete-question/:id`, async (req, res) => {
   const { id } = req.params;
 

@@ -192,8 +192,7 @@ app.get(`/quiz/questions`, async (req, res) => {
       .from("questions") // The name of your table in Supabase
       .select("*") // Select all columns
       .order("id", { ascending: true }) // Ensuring order by a column first
-      .limit(5); // Limit to 5 questions
-
+      .limit(100); // Limit to 100 questions
     if (error) {
       throw error; // Handle any error from Supabase
     }

@@ -1,15 +1,15 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import cors from "cors";
 import dotenv from "dotenv";
+import cors from "cors";
 
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT ? process.env.PORT : 5001;
+const port = process.env.PORT || 5001;
 
 /*const db = new pg.Client({
   user: process.env.DB_USER,
@@ -27,11 +27,22 @@ const supabase = createSupabaseClient(
 );
 
 app.use(express.json());
-app.use(cors());
 
-app.get(``, async (req, res) => {
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL, // Specify your frontend origin
+    methods: ["GET", "POST", "PUT", "OPTIONS", "DELETE"], // Allowed HTTP methods
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization", // Include Authorization for JWT
+    ],
+  })
+);
+
+app.get(`/`, async (req, res) => {
   console.log("Welcome page");
-  res.send("Welcome to the app!");
+
+  res.json("Hello");
 });
 
 // Middleware to verify JWT token

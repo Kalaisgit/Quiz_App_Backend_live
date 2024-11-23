@@ -400,15 +400,15 @@ app.put(`/update-question/:id`, async (req, res) => {
   }
 });
 
+// Backend code - confirm that a proper response is sent after successful deletion
 app.delete(`/delete-question/:id`, async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Delete the question from the 'questions' table using Supabase
     const { data, error } = await supabase
-      .from("questions") // Specify the 'questions' table
+      .from("questions")
       .delete()
-      .eq("id", id); // Filter by question ID
+      .eq("id", id);
 
     // Check for errors
     if (error) {
@@ -416,11 +416,12 @@ app.delete(`/delete-question/:id`, async (req, res) => {
       return res.status(500).json({ error: "Unable to delete question" });
     }
 
-    // Check if the question was found and deleted
+    // If the question is not found or deleted
     if (data.length === 0) {
       return res.status(404).json({ message: "Question not found" });
     }
 
+    // Respond with success if deletion is successful
     res.status(200).json({ message: "Question deleted successfully" });
   } catch (err) {
     console.error("Error deleting question:", err);

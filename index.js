@@ -400,34 +400,29 @@ app.put(`/update-question/:id`, async (req, res) => {
   }
 });
 
-app.delete(`/delete-question/:id`, authenticateToken, async (req, res) => {
+app.delete("/delete-question/:id", async (req, res) => {
   const { id } = req.params;
-  // Check if the user is a Teacher
-  if (req.user.role !== "Teacher") {
-    console.log("Unauthorized role:", req.user.role); // Log unauthorized role
-    return res
-      .status(403)
-      .json({ error: "You are not authorized to view the questions." });
-  }
 
   try {
+    // Use Supabase to delete the question and return the affected rows
     const { data, error } = await supabase
       .from("questions")
       .delete()
-      .eq("id", id);
+      .eq("id", id)
+      .select(); // Ensure `data` contains the affected rows
 
-    // Check for errors
+    // Handle errors returned by Supabase
     if (error) {
       console.error("Error deleting question:", error);
       return res.status(500).json({ error: "Unable to delete question" });
     }
 
-    // If the question is not found or deleted
-    if (data.length === 0) {
+    // Check if the question existed and was deleted
+    if (!data || data.length === 0) {
       return res.status(404).json({ message: "Question not found" });
     }
 
-    // Respond with success if deletion is successful
+    // Return success if the question was deleted
     res.status(200).json({ message: "Question deleted successfully" });
   } catch (err) {
     console.error("Error deleting question:", err);
